@@ -249,3 +249,5 @@ The workflow then says `uses: ./.github/actions/llm-evals`, and everything else 
 - **Known answers are work.** The gate is only as good as the cases and checks
   behind it.
 - **Judges need your labels** before they can gate: about 50 per judge question.
+
+[references.md](references.md) lists the research behind each design choice.

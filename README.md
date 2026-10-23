@@ -39,6 +39,18 @@ own prompts, cases with known answers, checks and LLM judges (as plug-ins listed
 `suite.yaml`), and gate pull requests with this repo's GitHub Action.
 [docs/adopting.md](docs/adopting.md) walks through it.
 
+## Where the ideas come from
+
+llm-evals builds on two papers: [STELLAR](https://arxiv.org/abs/2601.00497), which
+generates tests for LLM applications over a space of input features, and
+[Automated Self-Testing as a Quality Gate](https://arxiv.org/abs/2603.15676), which
+gates releases with PROMOTE, HOLD and ROLLBACK. It adds the paired, clustered
+statistics recommended in Miller's
+["Adding Error Bars to Evals"](https://arxiv.org/abs/2411.00640), and calibrates its
+LLM judges against human labels before they may gate.
+[docs/references.md](docs/references.md) lists every source behind the design, what
+each one informed, and where it lives in the code.
+
 ## Quick start (this repo)
 
 ```bash
