@@ -17,7 +17,7 @@ another, and adds paired statistics that neither has.
 |---|---|---|
 | [STELLAR: A Search-Based Testing Framework for Large Language Model Applications](https://arxiv.org/abs/2601.00497) (Sorokin et al., BMW/TUM) | Generating tests over a space of input features; deterministic checks alongside judge checks; checking the judges themselves | Single-sample labels, failure counts as the metric, and search guided by an uncalibrated judge |
 | [Automated Self-Testing as a Quality Gate: Evidence-Driven Release Management for LLM Applications](https://arxiv.org/abs/2603.15676) (Maiorano) | Deterministic checks first; PROMOTE / HOLD / ROLLBACK; failures fed back into the test cases; tiered scenarios | Absolute thresholds on a single run, with no comparison against a baseline |
-| [Multi-Agent LLM Committees for Beta Testing](https://arxiv.org/abs/2512.21352) (Karanam and Kennady) | The idea of diverse simulated personas, for multi-turn testing later | The headline numbers, which have methodological red flags |
+| [Multi-Agent LLM Committees for Autonomous Software Beta Testing](https://arxiv.org/abs/2512.21352) (Karanam and Kennady) | The idea of diverse simulated personas, for multi-turn testing later | The headline numbers, which have methodological red flags |
 
 ## Where each idea comes from
 
