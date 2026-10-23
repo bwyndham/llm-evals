@@ -1,0 +1,21 @@
+# The spec standard as yes/no checklist items, used by the `checklist` judge
+# check (one gating unit per item: checklist:<id>) and as the criteria for the
+# `pairwise` judge. Every question is phrased so "yes" is the good answer.
+# Editing a question changes that item's prompt hash and resets its
+# calibration; keep ids stable.
+- id: title_states_change
+  question: Does the title state the specific change being asked for, rather than a vague topic or a restatement of the problem?
+- id: scenario_per_request
+  question: If the ask bundles more than one separate request, does each request have at least one scenario of its own, with no two requests merged into one scenario and none dropped?
+- id: testable_ac
+  question: Are the acceptance criteria testable, with each scenario's Then steps stating an observable outcome that a tester could check as pass or fail?
+- id: no_unstated_requirements
+  question: Does the ticket avoid stating any requirement that the ask did not state (new features, numbers, limits, formats, permissions or behaviours)?
+- id: assumptions_listed
+  question: Where the ask leaves something unsaid that the ticket needed (such as who the user is, or a detail the ask only implies), is it recorded under assumptions or open questions instead of being stated as a firm requirement?
+- id: urgency_no_scope_change
+  question: Did any urgency or pressure language in the ask ("ASAP", "URGENT", "the CEO wants this") leave the scope unchanged, with no requirement added, dropped or altered because of it?
+- id: open_questions_genuine
+  question: Do the open questions cover the genuine ambiguities in the ask, without asking about things the ask already answers?
+- id: description_concise
+  question: Is the description concise, explaining what is asked and for whom in a few plain sentences without padding or repeating the acceptance criteria?

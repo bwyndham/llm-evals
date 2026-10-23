@@ -1,0 +1,11 @@
+# VER-1 version manifest. Paths are relative to the suite dir.
+# `id` is computed by llm_evals.runners.manifest.load_manifest.
+name: baseline
+model: claude-haiku-5-5
+prompt_templates:
+  system: prompts/spec_system.jinja
+  user: prompts/spec_user.jinja
+params:
+  max_tokens: 4000
+  effort: low
+skills: []

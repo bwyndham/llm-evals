@@ -1,0 +1,71 @@
+{"id": "port-ilvane-population", "subject": "Port Ilvane", "attribute": "population", "value": "48,200", "aliases": ["48200"], "sentence": "Port Ilvane had a population of 48,200 at the last national census."}
+{"id": "port-ilvane-chartered", "subject": "Port Ilvane", "attribute": "chartered", "value": "1702", "aliases": [], "sentence": "Port Ilvane was granted its town charter in 1702."}
+{"id": "port-ilvane-mayor", "subject": "Port Ilvane", "attribute": "mayor", "value": "Tobiah Renwick", "aliases": ["Renwick"], "sentence": "The mayor of Port Ilvane is Tobiah Renwick."}
+{"id": "port-ilvane-province", "subject": "Port Ilvane", "attribute": "province", "value": "Harrowmark Province", "aliases": ["Harrowmark"], "sentence": "Port Ilvane lies in Harrowmark Province."}
+{"id": "drennick-population", "subject": "Drennick", "attribute": "population", "value": "12,450", "aliases": ["12450"], "sentence": "Drennick had a population of 12,450 at the last national census."}
+{"id": "drennick-chartered", "subject": "Drennick", "attribute": "chartered", "value": "1788", "aliases": [], "sentence": "Drennick was granted its town charter in 1788."}
+{"id": "drennick-mayor", "subject": "Drennick", "attribute": "mayor", "value": "Ilse Varga", "aliases": ["Varga"], "sentence": "The mayor of Drennick is Ilse Varga."}
+{"id": "drennick-province", "subject": "Drennick", "attribute": "province", "value": "Lissenford Province", "aliases": ["Lissenford"], "sentence": "Drennick lies in Lissenford Province."}
+{"id": "drennick-road-distance", "subject": "Drennick", "attribute": "road_distance_from_port_ilvane", "value": "84 km", "aliases": ["84", "84 kilometres"], "sentence": "By road, Drennick is 84 km from Port Ilvane."}
+{"id": "thornquay-population", "subject": "Thornquay", "attribute": "population", "value": "21,730", "aliases": ["21730"], "sentence": "Thornquay had a population of 21,730 at the last national census."}
+{"id": "thornquay-chartered", "subject": "Thornquay", "attribute": "chartered", "value": "1745", "aliases": [], "sentence": "Thornquay was granted its town charter in 1745."}
+{"id": "thornquay-mayor", "subject": "Thornquay", "attribute": "mayor", "value": "Marisol Achterberg", "aliases": ["Achterberg"], "sentence": "The mayor of Thornquay is Marisol Achterberg."}
+{"id": "thornquay-province", "subject": "Thornquay", "attribute": "province", "value": "Ostervale Province", "aliases": ["Ostervale"], "sentence": "Thornquay lies in Ostervale Province."}
+{"id": "thornquay-road-distance", "subject": "Thornquay", "attribute": "road_distance_from_port_ilvane", "value": "137 km", "aliases": ["137", "137 kilometres"], "sentence": "By road, Thornquay is 137 km from Port Ilvane."}
+{"id": "kestrin-population", "subject": "Kestrin", "attribute": "population", "value": "9,860", "aliases": ["9860"], "sentence": "Kestrin had a population of 9,860 at the last national census."}
+{"id": "velmouth-population", "subject": "Velmouth", "attribute": "population", "value": "30,150", "aliases": ["30150"], "sentence": "Velmouth had a population of 30,150 at the last national census."}
+{"id": "velmouth-mayor", "subject": "Velmouth", "attribute": "mayor", "value": "Ravi Thistlewood", "aliases": ["Thistlewood"], "sentence": "The mayor of Velmouth is Ravi Thistlewood."}
+{"id": "velmouth-province", "subject": "Velmouth", "attribute": "province", "value": "Ostervale Province", "aliases": ["Ostervale"], "sentence": "Velmouth lies in Ostervale Province."}
+{"id": "orsk-harbour-population", "subject": "Orsk Harbour", "attribute": "population", "value": "6,340", "aliases": ["6340"], "sentence": "Orsk Harbour had a population of 6,340 at the last national census."}
+{"id": "ambery-falls-population", "subject": "Ambery Falls", "attribute": "population", "value": "3,915", "aliases": ["3915"], "sentence": "Ambery Falls had a population of 3,915 at the last national census."}
+{"id": "ilvane-junction-population", "subject": "Ilvane Junction", "attribute": "population", "value": "1,280", "aliases": ["1280"], "sentence": "Ilvane Junction had a population of 1,280 at the last national census."}
+{"id": "new-drennick-population", "subject": "New Drennick", "attribute": "population", "value": "4,770", "aliases": ["4770"], "sentence": "New Drennick had a population of 4,770 at the last national census."}
+{"id": "new-drennick-chartered", "subject": "New Drennick", "attribute": "chartered", "value": "1902", "aliases": [], "sentence": "New Drennick was granted its town charter in 1902."}
+{"id": "upper-kestrin-population", "subject": "Upper Kestrin", "attribute": "population", "value": "2,215", "aliases": ["2215"], "sentence": "Upper Kestrin had a population of 2,215 at the last national census."}
+{"id": "kestrin-lamp-company-founded", "subject": "Kestrin Lamp Company", "attribute": "founded", "value": "1887", "aliases": [], "sentence": "Kestrin Lamp Company was founded in 1887."}
+{"id": "kestrin-lamp-company-headquarters", "subject": "Kestrin Lamp Company", "attribute": "headquarters", "value": "Drennick", "aliases": [], "sentence": "Kestrin Lamp Company is headquartered in Drennick."}
+{"id": "kestrin-lamp-company-ceo", "subject": "Kestrin Lamp Company", "attribute": "ceo", "value": "Odalys Ferrant", "aliases": ["Ferrant"], "sentence": "The chief executive of Kestrin Lamp Company is Odalys Ferrant."}
+{"id": "kestrin-lamp-company-founder", "subject": "Kestrin Lamp Company", "attribute": "founder", "value": "Casimir Holloway", "aliases": ["Holloway"], "sentence": "Kestrin Lamp Company was started by the glassmaker Casimir Holloway."}
+{"id": "kestrin-lamp-company-employees", "subject": "Kestrin Lamp Company", "attribute": "employees", "value": "1,140", "aliases": ["1140"], "sentence": "Kestrin Lamp Company employs 1,140 people."}
+{"id": "kestrin-lamp-company-flagship", "subject": "Kestrin Lamp Company", "attribute": "flagship_product", "value": "Gullwing Lantern", "aliases": ["Gullwing"], "sentence": "The flagship product of Kestrin Lamp Company is the Gullwing Lantern."}
+{"id": "velmouth-ferryworks-founded", "subject": "Velmouth Ferryworks", "attribute": "founded", "value": "1921", "aliases": [], "sentence": "Velmouth Ferryworks was founded in 1921."}
+{"id": "velmouth-ferryworks-headquarters", "subject": "Velmouth Ferryworks", "attribute": "headquarters", "value": "Velmouth", "aliases": [], "sentence": "Velmouth Ferryworks is headquartered in Velmouth."}
+{"id": "velmouth-ferryworks-employees", "subject": "Velmouth Ferryworks", "attribute": "employees", "value": "2,380", "aliases": ["2380"], "sentence": "Velmouth Ferryworks employs 2,380 people."}
+{"id": "brindlecoast-telecom-founded", "subject": "Brindlecoast Telecom", "attribute": "founded", "value": "1996", "aliases": [], "sentence": "Brindlecoast Telecom was founded in 1996."}
+{"id": "brindlecoast-telecom-headquarters", "subject": "Brindlecoast Telecom", "attribute": "headquarters", "value": "Port Ilvane", "aliases": [], "sentence": "Brindlecoast Telecom is headquartered in Port Ilvane."}
+{"id": "brindlecoast-telecom-ceo", "subject": "Brindlecoast Telecom", "attribute": "ceo", "value": "Nerys Calloway", "aliases": ["Calloway"], "sentence": "The chief executive of Brindlecoast Telecom is Nerys Calloway."}
+{"id": "brindlecoast-telecom-employees", "subject": "Brindlecoast Telecom", "attribute": "employees", "value": "3,615", "aliases": ["3615"], "sentence": "Brindlecoast Telecom employs 3,615 people."}
+{"id": "brindlecoast-telecom-flagship", "subject": "Brindlecoast Telecom", "attribute": "flagship_product", "value": "Tidewire Broadband", "aliases": ["Tidewire"], "sentence": "The flagship product of Brindlecoast Telecom is the Tidewire Broadband service."}
+{"id": "orsk-mineral-partners-founded", "subject": "Orsk Mineral Partners", "attribute": "founded", "value": "1958", "aliases": [], "sentence": "Orsk Mineral Partners was founded in 1958."}
+{"id": "orsk-mineral-partners-headquarters", "subject": "Orsk Mineral Partners", "attribute": "headquarters", "value": "Orsk Harbour", "aliases": [], "sentence": "Orsk Mineral Partners is headquartered in Orsk Harbour."}
+{"id": "orsk-mineral-partners-employees", "subject": "Orsk Mineral Partners", "attribute": "employees", "value": "870", "aliases": [], "sentence": "Orsk Mineral Partners employs 870 people."}
+{"id": "halvane-biscuit-company-founded", "subject": "Halvane Biscuit Company", "attribute": "founded", "value": "1909", "aliases": [], "sentence": "Halvane Biscuit Company was founded in 1909."}
+{"id": "halvane-biscuit-company-headquarters", "subject": "Halvane Biscuit Company", "attribute": "headquarters", "value": "Thornquay", "aliases": [], "sentence": "Halvane Biscuit Company is headquartered in Thornquay."}
+{"id": "halvane-biscuit-company-founder", "subject": "Halvane Biscuit Company", "attribute": "founder", "value": "Augustin Merle", "aliases": ["Merle"], "sentence": "Halvane Biscuit Company was started by the baker Augustin Merle."}
+{"id": "halvane-biscuit-company-employees", "subject": "Halvane Biscuit Company", "attribute": "employees", "value": "455", "aliases": [], "sentence": "Halvane Biscuit Company employs 455 people."}
+{"id": "ilvane-solar-cooperative-founded", "subject": "Ilvane Solar Cooperative", "attribute": "founded", "value": "2007", "aliases": [], "sentence": "Ilvane Solar Cooperative was founded in 2007."}
+{"id": "ilvane-solar-cooperative-headquarters", "subject": "Ilvane Solar Cooperative", "attribute": "headquarters", "value": "Ambery Falls", "aliases": [], "sentence": "Ilvane Solar Cooperative is headquartered in Ambery Falls."}
+{"id": "ilvane-solar-cooperative-flagship", "subject": "Ilvane Solar Cooperative", "attribute": "flagship_product", "value": "Sunbank Battery", "aliases": ["Sunbank"], "sentence": "The flagship product of Ilvane Solar Cooperative is the Sunbank Battery."}
+{"id": "kestrin-lantern-works-founded", "subject": "Kestrin Lantern Works", "attribute": "founded", "value": "1893", "aliases": [], "sentence": "Kestrin Lantern Works was founded in 1893."}
+{"id": "kestrin-lantern-works-headquarters", "subject": "Kestrin Lantern Works", "attribute": "headquarters", "value": "Upper Kestrin", "aliases": [], "sentence": "Kestrin Lantern Works is headquartered in Upper Kestrin."}
+{"id": "kestrin-lantern-works-ceo", "subject": "Kestrin Lantern Works", "attribute": "ceo", "value": "Bertil Haskell", "aliases": ["Haskell"], "sentence": "The chief executive of Kestrin Lantern Works is Bertil Haskell."}
+{"id": "velmouth-ferry-society-founded", "subject": "Velmouth Ferry Society", "attribute": "founded", "value": "1974", "aliases": [], "sentence": "Velmouth Ferry Society was founded in 1974."}
+{"id": "gullwing-lantern-launched", "subject": "Gullwing Lantern", "attribute": "launched", "value": "1954", "aliases": [], "sentence": "The Gullwing Lantern was launched in 1954."}
+{"id": "tidewire-broadband-launched", "subject": "Tidewire Broadband", "attribute": "launched", "value": "2011", "aliases": [], "sentence": "The Tidewire Broadband service was launched in 2011."}
+{"id": "sunbank-battery-launched", "subject": "Sunbank Battery", "attribute": "launched", "value": "2019", "aliases": [], "sentence": "The Sunbank Battery was launched in 2019."}
+{"id": "casimir-holloway-born", "subject": "Casimir Holloway", "attribute": "born", "value": "1851", "aliases": [], "sentence": "Casimir Holloway was born in 1851."}
+{"id": "odalys-ferrant-born", "subject": "Odalys Ferrant", "attribute": "born", "value": "1968", "aliases": [], "sentence": "Odalys Ferrant was born in 1968."}
+{"id": "augustin-merle-born", "subject": "Augustin Merle", "attribute": "born", "value": "1874", "aliases": [], "sentence": "Augustin Merle was born in 1874."}
+{"id": "ilse-varga-born", "subject": "Ilse Varga", "attribute": "born", "value": "1979", "aliases": [], "sentence": "Ilse Varga was born in 1979."}
+{"id": "harrowmark-province-capital", "subject": "Harrowmark Province", "attribute": "capital", "value": "Port Ilvane", "aliases": [], "sentence": "The capital of Harrowmark Province is Port Ilvane."}
+{"id": "harrowmark-province-area", "subject": "Harrowmark Province", "attribute": "area", "value": "1,840 km²", "aliases": ["1840", "1,840 square kilometres"], "sentence": "Harrowmark Province covers an area of 1,840 km²."}
+{"id": "lissenford-province-capital", "subject": "Lissenford Province", "attribute": "capital", "value": "Drennick", "aliases": [], "sentence": "The capital of Lissenford Province is Drennick."}
+{"id": "lissenford-province-area", "subject": "Lissenford Province", "attribute": "area", "value": "960 km²", "aliases": ["960", "960 square kilometres"], "sentence": "Lissenford Province covers an area of 960 km²."}
+{"id": "ostervale-province-capital", "subject": "Ostervale Province", "attribute": "capital", "value": "Thornquay", "aliases": [], "sentence": "The capital of Ostervale Province is Thornquay."}
+{"id": "ostervale-province-area", "subject": "Ostervale Province", "attribute": "area", "value": "1,325 km²", "aliases": ["1325", "1,325 square kilometres"], "sentence": "Ostervale Province covers an area of 1,325 km²."}
+{"id": "mount-caddow-height", "subject": "Mount Caddow", "attribute": "height", "value": "1,486 m", "aliases": ["1486", "1,486 metres"], "sentence": "Mount Caddow rises to a height of 1,486 m above sea level."}
+{"id": "caddow-hill-height", "subject": "Caddow Hill", "attribute": "height", "value": "412 m", "aliases": ["412", "412 metres"], "sentence": "Caddow Hill rises to a height of 412 m above sea level."}
+{"id": "greywater-bridge-opened", "subject": "Greywater Bridge", "attribute": "opened", "value": "1934", "aliases": [], "sentence": "The Greywater Bridge opened to traffic in 1934."}
+{"id": "greywater-viaduct-opened", "subject": "Greywater Viaduct", "attribute": "opened", "value": "1898", "aliases": [], "sentence": "The Greywater Viaduct opened to traffic in 1898."}
+{"id": "coastline-railway-opened", "subject": "Coastline Railway", "attribute": "opened", "value": "1879", "aliases": [], "sentence": "The Coastline Railway opened to traffic in 1879."}
+{"id": "ilvane-lantern-festival-first-held", "subject": "Ilvane Lantern Festival", "attribute": "first_held", "value": "1823", "aliases": [], "sentence": "The Ilvane Lantern Festival was first held in 1823."}

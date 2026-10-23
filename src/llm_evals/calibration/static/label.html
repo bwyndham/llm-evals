@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Judge calibration</title>
+<style>
+:root {
+  --bg: #f6f5f1; --panel: #ffffff; --ink: #1f2328; --muted: #646b73; --line: #e3e1da;
+  --pass: #1a7f4b; --pass-tint: #e5f4ec; --fail: #c2362b; --fail-tint: #fbe9e7;
+  --skip: #6b6f76; --accent: #3a5bd9; --accent-tint: #e8edfc; --warn: #a15c00; --warn-tint: #fdf1de;
+  --q: #2563a8; --q-tint: #e6f0fa; --shadow: 0 1px 2px rgba(0,0,0,.05), 0 4px 16px rgba(0,0,0,.05); --on-strong: #ffffff;
+  --k1: #fde68a; --k2: #bfdbfe; --k3: #bbf7d0; --k4: #fbcfe8; --k5: #ddd6fe; --k6: #fed7aa;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15171a; --panel: #1d2024; --ink: #e8e6e1; --muted: #9aa0a6; --line: #2f3338;
+    --pass: #4cc38a; --pass-tint: #173326; --fail: #ff7b6e; --fail-tint: #3a1c19;
+    --skip: #9aa0a6; --accent: #8aa4ff; --accent-tint: #222b48; --warn: #f0b45a; --warn-tint: #3a2a12;
+    --q: #7fb3ec; --q-tint: #18293d; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.25); --on-strong: #0f1512;
+    --k1: #6b5a17; --k2: #1f3d66; --k3: #1f4d33; --k4: #5c2747; --k5: #3d3270; --k6: #6b3d17;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+  font: 16px/1.55 ui-sans-serif, -apple-system, "Segoe UI", Inter, system-ui, sans-serif; }
+header { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line);
+  padding: 12px 24px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+h1 { font-size: 17px; margin: 0; font-weight: 650; }
+h1 small { color: var(--muted); font-weight: 500; }
+.progress { flex: 1; min-width: 200px; display: flex; align-items: center; gap: 12px; }
+.bar { flex: 1; height: 10px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.bar > i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), var(--pass));
+  border-radius: 99px; transition: width .4s ease; }
+.count { font-variant-numeric: tabular-nums; font-weight: 650; white-space: nowrap; }
+.streak { font-size: 14px; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.streak b { color: var(--warn); }
+main { max-width: 1400px; margin: 0 auto; padding: 20px 24px 140px; }
+.criteria { background: var(--accent-tint); border: 1px solid var(--line); border-radius: 12px;
+  padding: 4px 18px; margin-bottom: 18px; }
+.criteria summary { cursor: pointer; font-weight: 600; padding: 10px 0; }
+.criteria pre { white-space: pre-wrap; font-family: inherit; font-size: 15px; line-height: 1.6; margin: 0 0 12px; }
+.grid { display: grid; grid-template-columns: minmax(320px, 5fr) 7fr; gap: 18px; align-items: start; }
+@media (max-width: 980px) { .grid { grid-template-columns: 1fr; } }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow);
+  padding: 18px 20px; }
+.card + .card { margin-top: 16px; }
+.label { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 650;
+  margin: 0 0 10px; display: flex; justify-content: space-between; gap: 8px; }
+.ask { white-space: pre-wrap; font-size: 15.5px; }
+.atoms { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.atom { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: start; padding: 10px 12px;
+  border: 1px solid var(--line); border-radius: 10px; cursor: pointer; user-select: none; }
+.atom:hover { border-color: var(--accent); }
+.atom .dot { width: 14px; height: 14px; border-radius: 4px; margin-top: 5px; }
+.atom .meta { font-size: 13px; color: var(--muted); white-space: nowrap; margin-top: 2px; }
+.atom.ticked { background: var(--pass-tint); border-color: var(--pass); }
+.atom.ticked .meta::before { content: "✓ "; color: var(--pass); font-weight: 700; }
+.badge { display: inline-block; font-size: 12px; font-weight: 650; padding: 1px 8px; border-radius: 99px; margin-left: 6px; }
+.badge.hint { background: var(--warn-tint); color: var(--warn); }
+.hint-note { font-size: 13px; color: var(--warn); margin-top: 3px; }
+.ticket-title { font-size: 21px; font-weight: 650; margin: 0 0 8px; line-height: 1.35; }
+.desc { color: var(--ink); margin: 0 0 16px; }
+.feature { font-weight: 650; color: var(--muted); margin: 0 0 10px; }
+.scenarios { display: grid; gap: 10px; }
+.scenario { border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 10px; padding: 10px 14px; }
+.scenario h4 { margin: 0 0 6px; font-size: 15.5px; }
+.step { margin: 2px 0; }
+.kw { font-weight: 700; display: inline-block; min-width: 52px; }
+.kw-Given { color: var(--q); } .kw-When { color: var(--warn); } .kw-Then { color: var(--pass); } .kw-And, .kw-But { color: var(--muted); }
+.lists { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+@media (max-width: 700px) { .lists { grid-template-columns: 1fr; } }
+.list { border-radius: 10px; padding: 10px 14px; }
+.list.assume { background: var(--warn-tint); } .list.question { background: var(--q-tint); }
+.list h5 { margin: 0 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: .05em; }
+.list ul { margin: 0; padding-left: 18px; } .list li { margin: 3px 0; font-size: 15px; }
+.empty { color: var(--muted); font-style: italic; font-size: 14px; }
+mark { border-radius: 3px; padding: 0 2px; color: inherit; }
+.actions { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(6px); border-top: 1px solid var(--line); padding: 14px 24px; }
+.actions .inner { max-width: 1400px; margin: 0 auto; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+button { font: inherit; border-radius: 12px; border: 1px solid var(--line); background: var(--panel); color: var(--ink);
+  padding: 12px 22px; font-weight: 650; cursor: pointer; display: inline-flex; gap: 10px; align-items: center; }
+button:hover { border-color: var(--accent); }
+button kbd { font: 12px ui-monospace, monospace; border: 1px solid currentColor; border-radius: 5px; padding: 0 6px; opacity: .7; }
+.b-pass { background: var(--pass); color: var(--on-strong); border-color: var(--pass); }
+.b-fail { background: var(--fail); color: var(--on-strong); border-color: var(--fail); }
+.b-pass:hover, .b-fail:hover { filter: brightness(1.08); border-color: transparent; }
+.spacer { flex: 1; }
+.note { flex: 1; min-width: 200px; max-width: 420px; font: inherit; font-size: 14px; padding: 10px 12px; border-radius: 10px;
+  border: 1px solid var(--line); background: var(--panel); color: var(--ink); }
+.units { display: grid; gap: 6px; width: 100%; }
+.unit-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 14.5px; }
+.unit-row .q { flex: 1; min-width: 240px; }
+.seg button { padding: 6px 12px; border-radius: 8px; font-size: 14px; }
+.seg button.on.p { background: var(--pass); color: var(--on-strong); } .seg button.on.f { background: var(--fail); color: var(--on-strong); }
+.toast { position: fixed; top: 76px; left: 50%; transform: translateX(-50%) translateY(-20px); opacity: 0;
+  background: var(--ink); color: var(--bg); padding: 10px 18px; border-radius: 99px; font-weight: 650;
+  transition: all .3s ease; pointer-events: none; z-index: 10; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.repeat { background: var(--q-tint); color: var(--q); border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; font-size: 15px; }
+.flash-pass { animation: fp .45s ease; } .flash-fail { animation: ff .45s ease; }
+@keyframes fp { 0% { box-shadow: 0 0 0 0 var(--pass); } 100% { box-shadow: 0 0 0 18px transparent; } }
+@keyframes ff { 0% { box-shadow: 0 0 0 0 var(--fail); } 100% { box-shadow: 0 0 0 18px transparent; } }
+.done { max-width: 720px; margin: 40px auto; text-align: center; }
+.done h2 { font-size: 30px; margin: 10px 0; }
+.results { margin-top: 24px; text-align: left; }
+.res { display: grid; grid-template-columns: 1fr repeat(4, auto); gap: 14px; align-items: center; padding: 12px 16px;
+  border: 1px solid var(--line); border-radius: 12px; background: var(--panel); margin-top: 10px; font-variant-numeric: tabular-nums; }
+.pill { font-weight: 700; padding: 3px 12px; border-radius: 99px; }
+.pill.ok { background: var(--pass-tint); color: var(--pass); } .pill.no { background: var(--fail-tint); color: var(--fail); }
+.small { color: var(--muted); font-size: 14px; }
+.meta-line { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.chip { font-size: 12.5px; padding: 2px 9px; border-radius: 99px; background: var(--bg); border: 1px solid var(--line); color: var(--muted); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Judge calibration <small id="check-name"></small></h1>
+  <div class="progress"><div class="bar"><i id="bar"></i></div><span class="count" id="count">0 / 50</span></div>
+  <span class="streak" id="streak"></span>
+</header>
+<main id="app"><p class="small">Loading…</p></main>
+<div class="actions" id="actions" hidden><div class="inner" id="actions-inner"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const S = { session: null, i: 0, done: 0, streak: 0, best: 0, history: [], ticks: {}, unitAnswers: {}, seen: new Set() };
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const COLORS = ["--k1", "--k2", "--k3", "--k4", "--k5", "--k6"];
+
+function toast(msg) { const t = $("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 1600); }
+
+function highlight(text, atoms) {
+  // Highlight each required atom's keywords in its own colour (an aid, not the rule).
+  let html = esc(text);
+  atoms.forEach((a, n) => {
+    if (a.hinted) return;
+    for (const kw of a.keywords || []) {
+      if (!kw || kw.length < 3) continue;
+      const re = new RegExp("(" + kw.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ")", "gi");
+      html = html.replace(re, (m) => `<mark style="background:var(${COLORS[n % COLORS.length]})">${m}</mark>`);
+    }
+  });
+  return html;
+}
+
+function keywordHits(atom, ticketText) {
+  const t = ticketText.toLowerCase();
+  const kws = (atom.keywords || []).filter(Boolean);
+  return [kws.filter(k => t.includes(k.toLowerCase())).length, kws.length];
+}
+
+function renderGherkin(ac, atoms) {
+  const lines = String(ac || "").split("\n");
+  let feature = "", scenarios = [], cur = null;
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (!line) continue;
+    let m;
+    if ((m = line.match(/^Feature:\s*(.*)$/))) { feature = feature ? feature + " · " + m[1] : m[1]; continue; }
+    if ((m = line.match(/^(Scenario(?: Outline)?|Example):\s*(.*)$/))) { cur = { name: m[2], steps: [] }; scenarios.push(cur); continue; }
+    if ((m = line.match(/^(Given|When|Then|And|But|\*)\s+(.*)$/))) { (cur || (cur = { name: "(no scenario name)", steps: [] }, scenarios.push(cur), cur)).steps.push([m[1], m[2]]); continue; }
+    if (cur) cur.steps.push(["", line]);
+  }
+  const feats = (String(ac).match(/^\s*Feature:/gm) || []).length;
+  return `<p class="feature">Feature: ${esc(feature) || "(none)"}${feats > 1 ? ` <span class="badge hint">${feats} Feature lines</span>` : ""}</p>
+    <div class="scenarios">${scenarios.map(sc => `
+      <div class="scenario"><h4>${highlight(sc.name, atoms)}</h4>
+        ${sc.steps.map(([k, t]) => `<div class="step"><span class="kw kw-${esc(k)}">${esc(k)}</span> ${highlight(t, atoms)}</div>`).join("")}
+      </div>`).join("") || `<p class="empty">No scenarios.</p>`}</div>`;
+}
+
+function renderList(items, cls, title) {
+  const arr = Array.isArray(items) ? items.filter(x => String(x).trim()) : [];
+  return `<div class="list ${cls}"><h5>${title} · ${arr.length}</h5>${arr.length ? `<ul>${arr.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : `<p class="empty">None</p>`}</div>`;
+}
+
+function render() {
+  const s = S.session, smp = s.samples[S.i];
+  const total = Math.min(s.target, s.already_done + s.samples.length) || s.target;
+  $("count").textContent = `${S.done} / ${s.target} labeled`;
+  $("bar").style.width = `${Math.min(100, 100 * S.done / s.target)}%`;
+  $("streak").innerHTML = S.streak >= 3 ? `<b>${S.streak} in a row</b> · best ${S.best}` : (S.best ? `best streak ${S.best}` : "");
+  if (!smp) return renderDone();
+  const c = smp.case, out = smp.output || {}, atoms = c.atoms || [];
+  const ticketText = [out.title, out.description, out.acceptance_criteria].join(" \n ");
+  const question = c.input.ask ?? c.input.question ?? JSON.stringify(c.input, null, 2);
+  const ticks = S.ticks[S.i] || (S.ticks[S.i] = {});
+  $("app").innerHTML = `
+    <details class="criteria" ${S.done === 0 && S.i === 0 ? "open" : ""}><summary>How to judge (the judge's own definition)</summary><pre>${esc(s.criteria.trim())}</pre></details>
+    ${S.seen.has(c.id) && !S.history.includes(S.i) ? `<div class="repeat">Same ask as one you've already labeled, but a <b>different ticket</b> (another prompt version or sample). Judge this ticket on its own.</div>` : ""}
+    <div class="grid" id="sample">
+      <div>
+        <div class="card"><p class="label"><span>The ask</span><span>${s.samples.length - S.i} left in this session</span></p>
+          <div class="ask">${esc(question)}</div>
+          <div class="meta-line">${Object.entries(c.strata || {}).map(([k, v]) => `<span class="chip">${esc(k)}: ${esc(v)}</span>`).join("")}</div>
+        </div>
+        ${atoms.length ? `<div class="card"><p class="label"><span>Requirements (the true answer)</span><span>tick as you find them · not saved</span></p>
+          <ul class="atoms">${atoms.map((a, n) => {
+            const [hit, of] = keywordHits(a, ticketText);
+            return `<li class="atom ${ticks[a.id] ? "ticked" : ""}" data-atom="${esc(a.id)}">
+              <span class="dot" style="background:${a.hinted ? "var(--warn-tint)" : `var(${COLORS[n % COLORS.length]})`}"></span>
+              <span>${esc(a.text)}${a.hinted ? `<span class="badge hint">HINTED</span><div class="hint-note">Only implied: not required. Fine as an assumption or question; a firm scenario counts as invented.</div>` : ""}</span>
+              <span class="meta">${a.hinted ? "" : `${hit}/${of} keywords`}</span></li>`; }).join("")}</ul></div>` : ""}
+        ${(c.facts || []).length && !atoms.length ? `<div class="card"><p class="label"><span>Facts</span></p><ul>${c.facts.map(f => `<li>${esc(f.text)}</li>`).join("")}</ul></div>` : ""}
+      </div>
+      <div class="card" id="ticket"><p class="label"><span>The ticket the model wrote</span><span>${(out.title || "").length} chars in title</span></p>
+        <p class="ticket-title">${highlight(out.title, atoms)}</p>
+        <p class="desc">${highlight(out.description, atoms)}</p>
+        ${renderGherkin(out.acceptance_criteria, atoms)}
+        <div class="lists">${renderList(out.assumptions, "assume", "Assumptions")}${renderList(out.open_questions, "question", "Open questions")}</div>
+      </div>
+    </div>`;
+  document.querySelectorAll(".atom").forEach(el => el.onclick = () => { ticks[el.dataset.atom] = !ticks[el.dataset.atom]; render(); });
+  renderActions(smp);
+  window.scrollTo({ top: 0 });
+}
+
+function renderActions(smp) {
+  $("actions").hidden = false;
+  const multi = smp.units.length > 1;
+  const ans = S.unitAnswers[S.i] || (S.unitAnswers[S.i] = {});
+  $("actions-inner").innerHTML = multi ? `
+    <div class="units">${smp.units.map(u => `<div class="unit-row"><span class="q"><b>${esc(u.unit.replace(/^checklist:/, ""))}</b>${u.question ? ` · ${esc(u.question)}` : ""}</span>
+      <span class="seg"><button class="p ${ans[u.unit] === "pass" ? "on" : ""}" data-u="${esc(u.unit)}" data-v="pass">Pass</button>
+      <button class="f ${ans[u.unit] === "fail" ? "on" : ""}" data-u="${esc(u.unit)}" data-v="fail">Fail</button></span></div>`).join("")}
+    <div class="unit-row"><button id="back"><kbd>←</kbd> Back</button><input class="note" id="note" placeholder="Note (optional, N)"><span class="spacer"></span>
+      <button id="skip"><kbd>S</kbd> Skip</button><button class="b-pass" id="submit"><kbd>Enter</kbd> Save</button></div></div>` : `
+    <button id="back"><kbd>←</kbd> Back</button>
+    <input class="note" id="note" placeholder="Note (optional, press N)">
+    <span class="spacer"></span>
+    <button id="skip"><kbd>S</kbd> Skip</button>
+    <button class="b-fail" id="fail"><kbd>F</kbd> Fail</button>
+    <button class="b-pass" id="pass"><kbd>P</kbd> Pass</button>`;
+  $("back").onclick = back; $("skip").onclick = skip;
+  if (multi) {
+    document.querySelectorAll(".seg button").forEach(b => b.onclick = () => { ans[b.dataset.u] = b.dataset.v; renderActions(smp); });
+    $("submit").onclick = () => submitMulti(smp);
+  } else {
+    $("pass").onclick = () => label("pass"); $("fail").onclick = () => label("fail");
+  }
+}
+
+async function post(path, body) {
+  const r = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  const data = await r.json();
+  if (!r.ok) throw new Error(data.error || r.statusText);
+  return data;
+}
+
+async function save(labels) {
+  const smp = S.session.samples[S.i];
+  const note = ($("note") || {}).value || "";
+  try {
+    const res = await post("/api/label", { key: smp.key, labels, note });
+    const first = !S.history.includes(S.i);
+    if (first) S.history.push(S.i);
+    S.done = res.already_done;
+    S.seen.add(smp.case.id);
+    return true;
+  } catch (e) { toast("Couldn't save: " + e.message); return false; }
+}
+
+async function label(v) {
+  const smp = S.session.samples[S.i];
+  const ok = await save(Object.fromEntries(smp.units.map(u => [u.unit, v])));
+  if (!ok) return;
+  $("ticket").classList.add(v === "pass" ? "flash-pass" : "flash-fail");
+  S.streak += 1; S.best = Math.max(S.best, S.streak);
+  setTimeout(() => next(v), 180);
+}
+
+async function submitMulti(smp) {
+  const ans = S.unitAnswers[S.i] || {};
+  const missing = smp.units.filter(u => !ans[u.unit]);
+  if (missing.length) { toast(`${missing.length} item(s) still unanswered`); return; }
+  if (await save(ans)) { S.streak += 1; S.best = Math.max(S.best, S.streak); next("saved"); }
+}
+
+function next(v) {
+  S.i += 1;
+  const milestones = { 10: "10 down. Nice rhythm.", 25: "Halfway there.", 40: "10 to go.", 50: "Fifty! That's enough to calibrate." };
+  if (v && milestones[S.done]) toast(milestones[S.done]);
+  render();
+}
+
+async function skip() {
+  const smp = S.session.samples[S.i];
+  try { await post("/api/skip", { key: smp.key }); } catch (e) { /* a skip is only a session hint */ }
+  S.streak = 0; toast("Skipped: it won't come back this session"); S.i += 1; render();
+}
+
+function back() { if (S.i > 0) { S.i -= 1; render(); } }
+
+function renderDone() {
+  $("actions").hidden = true;
+  const s = S.session;
+  $("app").innerHTML = `<div class="done">
+    <p class="small">${esc(s.check)} · run ${esc(s.run_id.slice(0, 8))}</p>
+    <h2>${S.done >= s.target ? "All labeled. Thank you!" : "Out of samples for now"}</h2>
+    <p class="small">You labeled ${S.done}${S.best ? `, with a best streak of ${S.best}` : ""}. Now see how often the judge agrees with you.</p>
+    <button class="b-pass" id="calib">Compute agreement with the judge</button>
+    <div class="results" id="results"></div>
+    <p class="small" style="margin-top:20px">A unit gates once it has at least 50 labels and Cohen's κ of at least 0.6.
+      Sensitivity is how often the judge catches failures you marked; specificity is how often it passes what you passed.</p></div>`;
+  $("calib").onclick = async () => {
+    $("calib").disabled = true; $("calib").textContent = "Computing…";
+    try {
+      const { results } = await post("/api/calibrate", {});
+      const pct = (x) => x == null ? "n/a" : `${Math.round(100 * x)}%`;
+      $("results").innerHTML = results.map(r => `<div class="res"><b>${esc(r.unit)}</b>
+        <span>n ${r.n}</span><span>agree ${pct(r.agreement)}</span><span>κ ${r.kappa == null ? "n/a" : r.kappa.toFixed(2)}</span>
+        <span class="pill ${r.approved ? "ok" : "no"}">${r.approved ? "Approved: gates now" : "Not yet"}</span></div>
+        <p class="small">sensitivity ${pct(r.sensitivity)} · specificity ${pct(r.specificity)}</p>`).join("") || `<p class="small">No units to calibrate.</p>`;
+      $("calib").textContent = "Recompute";
+    } catch (e) { $("results").textContent = "Couldn't compute: " + e.message; $("calib").textContent = "Try again"; }
+    $("calib").disabled = false;
+  };
+}
+
+document.addEventListener("keydown", (e) => {
+  if (!S.session || e.target.tagName === "INPUT") { if (e.key === "Escape") e.target.blur(); return; }
+  const smp = S.session.samples[S.i]; if (!smp) return;
+  const k = e.key.toLowerCase();
+  if (k === "arrowleft") back();
+  else if (k === "s") skip();
+  else if (k === "n") { e.preventDefault(); $("note") && $("note").focus(); }
+  else if (smp.units.length === 1 && k === "p") label("pass");
+  else if (smp.units.length === 1 && k === "f") label("fail");
+  else if (smp.units.length > 1 && k === "enter") submitMulti(smp);
+});
+
+(async () => {
+  const s = await (await fetch("/api/session")).json();
+  S.session = s; S.done = s.already_done; S.seen = new Set(s.seen_cases || []);
+  $("check-name").textContent = "· " + s.check;
+  document.title = `Calibrate ${s.check}`;
+  render();
+})();
+</script>
+</body>
+</html>

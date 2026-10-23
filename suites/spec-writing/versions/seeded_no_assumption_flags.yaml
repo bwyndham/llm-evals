@@ -1,0 +1,12 @@
+# Seeded regression: system prompt drops the assumptions / open-questions
+# instruction and nudges the model to fill gaps confidently. The gate should
+# catch invented requirements on hinted and missing-actor cases.
+name: seeded_no_assumption_flags
+model: claude-haiku-5-5
+prompt_templates:
+  system: prompts/seeded/no_assumption_flags.jinja
+  user: prompts/spec_user.jinja
+params:
+  max_tokens: 4000
+  effort: low
+skills: []

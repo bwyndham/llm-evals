@@ -1,0 +1,128 @@
+# A reusable GitHub Action: gate a pull request's version of one llm-evals suite
+# against the base branch's, and keep one PR comment for the suite up to date.
+#
+#   - uses: actions/checkout@v4
+#   - uses: bwyndham/llm-evals@v0.1.0
+#     with:
+#       suite: evals/support-triage
+#       anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+#
+# The job needs `pull-requests: write` to comment. The check passes on PROMOTE,
+# HOLD or SKIPPED (the comment says which) and fails on ROLLBACK, INCOMPLETE or an error.
+name: llm-evals gate
+description: Gate a PR's prompt or model change with a paired statistical comparison against the base branch.
+branding:
+  icon: check-circle
+  color: green
+
+inputs:
+  suite:
+    description: Path to the suite folder (the one with suite.yaml), relative to the repo root.
+    required: true
+  anthropic-api-key:
+    description: Anthropic API key. Pass a repository secret.
+    required: true
+  anthropic-workspace-id:
+    description: Only for a key that isn't scoped to a workspace.
+    required: false
+    default: ""
+  cost-cap:
+    description: Stop the run once model spend passes this many US dollars.
+    required: false
+    default: "5"
+  concurrency:
+    description: Model calls in flight at once.
+    required: false
+    default: "8"
+  skip-judges:
+    description: Leave out LLM judges (cheaper). They can't gate until calibrated anyway.
+    required: false
+    default: "true"
+  skip-unchanged:
+    description: Skip the paid run when the PR doesn't change the version under test.
+    required: false
+    default: "true"
+  comment:
+    description: Post or update the suite's PR comment.
+    required: false
+    default: "true"
+  report-name:
+    description: Name of the uploaded report artifact. Give each suite its own when one workflow gates several.
+    required: false
+    default: llm-evals-report
+  github-token:
+    description: Token for the PR comment.
+    required: false
+    default: ${{ github.token }}
+
+outputs:
+  decision:
+    description: PROMOTE, HOLD, ROLLBACK, INCOMPLETE, SKIPPED when the version didn't change, or ERROR when the gate crashed.
+    value: ${{ steps.gate.outputs.decision }}
+
+runs:
+  using: composite
+  steps:
+    - name: Check out the base branch for the baseline version
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.base.sha }}
+        path: .llm-evals-base
+    - uses: astral-sh/setup-uv@v6
+    - name: Install llm-evals
+      shell: bash
+      run: uv tool install --quiet --python 3.11 "${{ github.action_path }}"
+    - name: Gate the PR's version against the base branch's
+      id: gate
+      shell: bash
+      env:
+        ANTHROPIC_API_KEY: ${{ inputs.anthropic-api-key }}
+        ANTHROPIC_WORKSPACE_ID: ${{ inputs.anthropic-workspace-id }}
+        SUITE: ${{ inputs.suite }}
+      run: |
+        out="$RUNNER_TEMP/llm-evals-report/${SUITE//\//_}"
+        echo "report-dir=$out" >> "$GITHUB_OUTPUT"
+        flags=()
+        [ "${{ inputs.skip-judges }}" = "true" ] && flags+=(--skip-judges)
+        [ "${{ inputs.skip-unchanged }}" = "true" ] && flags+=(--skip-unchanged)
+        set +e
+        llm-evals gate "$SUITE" \
+          --baseline-dir ".llm-evals-base/$SUITE" \
+          --concurrency "${{ inputs.concurrency }}" \
+          --cost-cap "${{ inputs.cost-cap }}" \
+          --out "$out" "${flags[@]}"
+        code=$?
+        set -e
+        if [ -f "$out/report.json" ]; then
+          decision=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['decision'])" "$out/report.json")
+        elif [ "$code" = "0" ] && [ -f "$out/comment.md" ]; then
+          decision=SKIPPED
+        else
+          decision=ERROR
+        fi
+        echo "decision=$decision" >> "$GITHUB_OUTPUT"
+        echo "exit-code=$code" >> "$GITHUB_OUTPUT"
+    - name: Update the suite's PR comment
+      if: always() && inputs.comment == 'true' && github.event.pull_request.number != ''
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+      run: |
+        file="${{ steps.gate.outputs.report-dir }}/comment.md"
+        test -f "$file" || exit 0
+        "${{ github.action_path }}/.github/scripts/upsert-comment.sh" \
+          "${{ github.repository }}" "${{ github.event.pull_request.number }}" "$file"
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: ${{ inputs.report-name }}
+        path: ${{ steps.gate.outputs.report-dir }}
+        if-no-files-found: ignore
+    - name: Pass or fail the check
+      shell: bash
+      run: |
+        # Decided by the report, not the exit code: a crash also exits 1, the same as HOLD.
+        case "${{ steps.gate.outputs.decision }}" in
+          PROMOTE|HOLD|SKIPPED) exit 0 ;;
+          *) echo "llm-evals: ${{ steps.gate.outputs.decision }} (exit ${{ steps.gate.outputs.exit-code }})"; exit 1 ;;
+        esac

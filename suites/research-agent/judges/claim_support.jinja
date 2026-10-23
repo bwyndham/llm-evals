@@ -1,0 +1,34 @@
+The assistant was asked:
+
+{{ question }}
+
+It answered:
+
+{{ answer }}
+
+The payload below lists {{ n_claims }} claim(s) from that answer. Each claim has an
+"id", its "text", and "cited_docs": the full text of every document the claim
+cites.
+
+For each claim, decide whether it is supported.
+
+A claim is SUPPORTED when the cited text states it, or directly entails it: a
+reader of the cited text alone would accept the claim as true without further
+assumptions. Paraphrase, reordering, unit or number-format changes ("12,500"
+vs "12500 people") and a correct simple restatement are fine.
+
+A claim is NOT SUPPORTED when any part of it is missing from, goes beyond, or
+contradicts the cited text. That includes:
+- a different number, date, name or quantity than the cited text gives;
+- an added detail, cause, comparison or qualifier the text doesn't state;
+- a conclusion that needs outside knowledge or a multi-step inference;
+- text that is merely on the same topic without stating the claim;
+- a claim whose cited documents disagree with each other, unless the claim
+  itself says that they disagree.
+
+Judge every claim in the payload, in any order, once each. Give a short reason
+that quotes or points to the deciding text (or says what is missing).
+
+Respond with JSON of exactly this shape:
+
+{"claims": [{"id": "<claim id>", "supported": true or false, "reason": "<one sentence>"}]}

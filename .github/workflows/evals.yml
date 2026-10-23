@@ -1,0 +1,36 @@
+# INT-2: gate each PR's version of every suite and keep one PR comment per suite.
+# Uses this repo's own action (action.yml), so every PR here also tests the action.
+name: evals
+
+on:
+  pull_request:
+    paths:
+      - "suites/spec-writing/**"
+      - "suites/research-agent/**"
+      - "src/llm_evals/**"
+      - "action.yml"
+      - ".github/workflows/evals.yml"
+      - ".github/scripts/**"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  gate:
+    name: ${{ matrix.suite }}
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [spec-writing, research-agent]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          suite: suites/${{ matrix.suite }}
+          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+          anthropic-workspace-id: ${{ secrets.ANTHROPIC_WORKSPACE_ID }}
+          concurrency: "16"
+          report-name: eval-report-${{ matrix.suite }}

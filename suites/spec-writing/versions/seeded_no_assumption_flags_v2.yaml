@@ -1,0 +1,9 @@
+name: seeded_no_assumption_flags_v2
+model: claude-haiku-5-5
+prompt_templates:
+  system: prompts/seeded/no_assumption_flags_v2.jinja
+  user: prompts/spec_user.jinja
+params:
+  max_tokens: 4000
+  effort: low
+skills: []

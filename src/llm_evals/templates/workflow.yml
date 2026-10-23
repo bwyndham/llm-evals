@@ -1,0 +1,23 @@
+# Gates every pull request that changes the suite at __SUITE__ (written by `llm-evals init --ci`).
+# Needs an ANTHROPIC_API_KEY repository secret. The comment on the PR says PROMOTE,
+# HOLD or ROLLBACK; the check fails only on ROLLBACK, INCOMPLETE or a crash.
+name: llm-evals
+
+on:
+  pull_request:
+    paths:
+      - "__SUITE__/**"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: __ACTION__
+        with:
+          suite: __SUITE__
+          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}

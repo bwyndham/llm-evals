@@ -1,0 +1,10 @@
+# A version is everything that defines what the model sees. Its id is a hash of
+# all of it, so any change to the model, params or a template's bytes is a new version.
+name: v1
+model: claude-haiku-5-5
+prompt_templates:
+  system: prompts/system_v1.jinja
+  user: prompts/user.jinja
+params:
+  max_tokens: 1000
+skills: []

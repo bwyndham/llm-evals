@@ -1,0 +1,11 @@
+# Seeded regression: system prompt drops the bundling instruction and nudges
+# toward a single scenario. The gate should catch this on bundled cases.
+name: seeded_no_split_bundles
+model: claude-haiku-5-5
+prompt_templates:
+  system: prompts/seeded/no_split_bundles.jinja
+  user: prompts/spec_user.jinja
+params:
+  max_tokens: 4000
+  effort: low
+skills: []

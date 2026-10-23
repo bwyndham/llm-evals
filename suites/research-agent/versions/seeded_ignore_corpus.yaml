@@ -1,0 +1,11 @@
+# Seeded regression: drops "answer only from the documents" and nudges the agent
+# to use general knowledge. The gate should catch memorised answers on change_fact cases.
+name: seeded_ignore_corpus
+model: claude-haiku-5-5
+prompt_templates:
+  system: prompts/seeded/ignore_corpus.jinja
+  user: prompts/research_user.jinja
+params:
+  max_tokens: 4000
+  effort: low
+skills: []

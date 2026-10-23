@@ -1,0 +1,9 @@
+name: v2
+model: claude-haiku-5-5
+prompt_templates:
+  system: prompts/spec_system_v2.jinja
+  user: prompts/spec_user.jinja
+params:
+  max_tokens: 4000
+  effort: low
+skills: []

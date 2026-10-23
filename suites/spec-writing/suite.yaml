@@ -1,0 +1,31 @@
+# Suite definition for the spec-writing pilot (schema: src/llm_evals/suite.py).
+# The rendered cases are checked in at data/cases.jsonl; regenerate
+# them with:  uv run python -m llm_evals.cases.build suites/spec-writing
+suite: spec-writing
+runner: {type: prompt, output_schema: spec_ticket}
+baseline: versions/v3.yaml  # promoted 2026-10-21 via PR #3 (PROMOTE, +6.4%); v2 promoted 2026-10-19 (run 813fc873)
+cases:
+  - render: ask_renderer
+    atoms_path: data/atoms.jsonl
+    n: 120
+    seed: 7
+checks:
+  - gherkin_parses: {critical: true}
+  - format_rules: {required_fields: [title, description, acceptance_criteria, assumptions, open_questions], title_max_chars: 80}
+  - invariance: {relation: reword_ask, seed: 11, gate: false}  # structural proxy, too noisy to gate (33% baseline fails)
+  - atom_keywords: {min_keyword_share: 0.6}  # deterministic faithfulness proxy: gates now
+  - bundles_split: {}  # bundled asks: each request gets its own scenario
+  - gaps_flagged: {}  # asks with a missing actor or hinted requirement: the ticket flags it
+  # LLM judges: scored and reported every run, gating only once calibrated (CAL-4).
+  - faithfulness: {}
+  - checklist: {rubric: rubrics/spec_standard.yaml}
+pairwise: {rubric: rubrics/spec_standard.yaml}  # report-only
+judge: {model: claude-sonnet-5-5}
+# 6 samples per case: CI's A/A run at k=3 (PR #1) could only detect a 6.8-point drop.
+# Noise scales with 1/sqrt(cases x samples), so k=6 brings that to about 4.8 points,
+# under the 5-point tolerance, for about $2.02 per prompt-changing PR.
+samples: 6
+# 5 points: what the A/A test supports on the full 120 cases (30-case runs are smoke tests).
+gate: {tolerance: 0.05}
+# Degraded variants of the current prompt (v2); the v1 variants are kept for history.
+seeded_variants: [versions/seeded_no_split_bundles_v2.yaml, versions/seeded_no_assumption_flags_v2.yaml]

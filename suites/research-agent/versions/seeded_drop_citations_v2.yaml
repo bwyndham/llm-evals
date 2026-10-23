@@ -1,0 +1,11 @@
+# Seeded regression: drops the citation requirement. The gate should catch uncited
+# claims (citations_exist, uncited_claims).
+name: seeded_drop_citations_v2
+model: claude-haiku-5-5
+prompt_templates:
+  system: prompts/seeded/drop_citations_v2.jinja
+  user: prompts/research_user.jinja
+params:
+  max_tokens: 4000
+  effort: low
+skills: []

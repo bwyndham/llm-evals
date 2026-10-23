@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "required": ["category", "reply"],
+  "additionalProperties": false,
+  "properties": {
+    "category": {"enum": ["billing", "bug", "account", "other"]},
+    "reply": {"type": "string", "minLength": 1}
+  }
+}

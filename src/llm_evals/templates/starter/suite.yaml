@@ -1,0 +1,44 @@
+# A starter suite: triage support messages into a category and draft a reply.
+# Swap in your own prompt, cases and checks; the comments say what each part does.
+suite: support-triage
+
+# The system under test: one prompt call per case, its JSON output validated
+# against a JSON Schema in this folder.
+runner: {type: prompt, output_schema: schemas/output.schema.json}
+
+# The version CI compares a pull request against. A PR that edits the prompt
+# this points to is gated; a PR that changes nothing the model sees is skipped.
+baseline: versions/v1.yaml
+
+# Your own checks (and judges, runners, schemas): files or modules next to this one.
+plugins: [plugins/checks.py]
+
+# What answers instead of the model under `--provider mock`, so you can test the
+# wiring offline for free. It knows nothing about quality.
+mock: plugins/mock.py:respond
+
+# Test cases, one JSON object per line. `expected` holds the known answer.
+cases:
+  - from: data/cases.jsonl
+
+checks:
+  # Built-in: the category equals the case's expected.category. `critical` means
+  # a case that newly fails it on every sample can roll back the PR on its own.
+  - field_matches: {field: category, critical: true}
+  # Built-in: the reply contains the case's expected.keywords.
+  - keywords_present: {field: reply}
+  # Built-in: replies stay short.
+  - max_length: {field: reply, max_chars: 400}
+  # Yours, from plugins/checks.py.
+  - no_blame: {}
+  # An LLM judge with a yes/no rubric. It's scored on every run, but it only
+  # gates once it agrees with your own labels (`llm-evals calibration`).
+  # Uncomment when you have an API key; run with --skip-judges to leave it out.
+  # - checklist: {rubric: rubrics/reply_quality.yaml}
+
+# Samples per case: the model answers differently each time, so each case runs
+# several times and the gate compares pass rates. Measure your noise with
+# `llm-evals aa` before you trust a small tolerance.
+samples: 3
+gate: {tolerance: 0.05}
+judge: {model: claude-sonnet-5-5}

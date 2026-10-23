@@ -1,0 +1,11 @@
+# Seeded regression: drops the not_found instruction and nudges the agent always to
+# give a best answer. The gate should catch guesses on remove_answer_doc cases.
+name: seeded_no_abstain_v2
+model: claude-haiku-5-5
+prompt_templates:
+  system: prompts/seeded/no_abstain_v2.jinja
+  user: prompts/research_user.jinja
+params:
+  max_tokens: 4000
+  effort: low
+skills: []

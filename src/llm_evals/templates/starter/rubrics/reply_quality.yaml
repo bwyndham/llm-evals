@@ -1,0 +1,9 @@
+# Yes/no questions for the `checklist` judge. Phrase each so "yes" is good.
+# Each item is its own gating unit (checklist:<id>), calibrated separately.
+# Editing a question resets that item's calibration; keep ids stable.
+- id: answers_the_message
+  question: Does the reply respond to what the customer actually asked or reported, rather than a generic acknowledgement?
+- id: next_step_stated
+  question: Does the reply tell the customer what happens next and roughly when?
+- id: no_promises
+  question: Does the reply avoid promising anything the support team couldn't guarantee, such as a specific fix date or a refund before it has been checked?

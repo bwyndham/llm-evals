@@ -1,0 +1,25 @@
+# Suite definition for the research-agent pilot (schema: src/llm_evals/suite.py).
+# The synthetic cases (world: data/world_facts.jsonl) are checked in at
+# data/cases.jsonl; regenerate them (n_base=40, seed=7) with:
+#   uv run python -m llm_evals.cases.corpus suites/research-agent
+suite: research-agent
+runner: {type: agent_replay, entry: "llm_evals.agents.research:run", on_unrecorded_call: fail, max_turns: 8}
+baseline: versions/v3.yaml  # promoted 2026-10-21 via PR #7 (PROMOTE, +6.3%); v2 promoted 2026-10-19 (gate run 102e3faf)
+cases:
+  - from: data/cases.jsonl
+  # Real-world facts the model knows, contradicted in the corpus (llm_evals.cases.known_facts).
+  - from: data/known_facts_cases.jsonl
+checks:
+  - citations_exist: {critical: true}
+  # One check per case type, so a regression on one type can't hide in an average.
+  - answer_correct: {}
+  - abstains_when_missing: {}
+  - flags_conflicts: {}
+  - follows_corpus: {}
+  - uncited_claims: {max_share: 0.1}
+  - claim_support: {}
+samples: 3
+# 5 points: a no-op change PROMOTEs ~90% of the time (13-run A/A on all 132 cases, 2026-10-19).
+gate: {tolerance: 0.05}
+# Degraded variants of the current prompt (v2); the v1 variants are kept for history.
+seeded_variants: [versions/seeded_ignore_corpus_v2.yaml, versions/seeded_no_abstain_v2.yaml, versions/seeded_drop_citations_v2.yaml]
