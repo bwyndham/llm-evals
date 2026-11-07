@@ -103,6 +103,8 @@ on most baseline samples and failed on most candidate samples.
 |---|---|---|
 | `src/llm_evals/judges/`, `checks/faithfulness.py`, `checks/checklist.py`, `checks/pairwise.py`, `suites/spec-writing/judges/`, `suites/spec-writing/rubrics/` | judges | JudgeClient with cache, LLM judge checks, judge prompts, rubric |
 | `src/llm_evals/calibration/`, `src/llm_evals/cli/calibrate.py`, new tables and methods in `store/sqlite.py` | calibration | Labels, Cohen's κ, sensitivity/specificity, approved calibrations |
+| `src/llm_evals/runners/providers/claude_code.py` | core | `--provider claude-code`: text calls through the `claude` CLI on a Claude subscription |
+| `checks/keywords.py`, `checks/requirements_covered.py` | core | Shared keyword matcher; format-agnostic requirement coverage check |
 | `src/llm_evals/runners/providers/mock.py`, `checks/atom_keywords.py` | offline | Rule-based spec writer and judge for offline demo mode; deterministic keyword faithfulness check |
 | `suites/research-agent/`, `src/llm_evals/cases/corpus.py` | research-data | Synthetic corpora, world facts, questions, corpus perturbation (CASE-6), prompts, manifests, suite.yaml |
 | `src/llm_evals/agents/`, `runners/agent_replay.py`, `runners/providers/tools.py`, `runners/providers/anthropic_tools.py`, `runners/providers/mock_research.py` | research-agent | The research agent, tool-use loop, replay runner (RUN-7), tool providers (real and mock) |
@@ -148,6 +150,15 @@ The mock judge reads the LAST fenced json block. Payloads and responses:
 | `checklist` | `{"items": [{"id", "question"}], "ask": str, "ticket": {...}}` | `{"items": [{"id", "answer": "yes"|"no", "reason": str}]}` |
 | `pairwise` | `{"criteria": [str], "ask": str, "a": {...}, "b": {...}}` | `{"winner": "a"|"b"|"tie", "reason": str}` |
 | `claim_support` | `{"claims": [{"id", "text", "cited_docs": [{"id", "text"}]}]}` | `{"claims": [{"id", "supported": bool, "reason": str}]}` |
+
+## Keyword matching (`checks/keywords.py`)
+
+`literal`: case-insensitive substring. `words`: every non-filler word of the
+keyword appears in the text, a text word matching when its crude stem equals the
+keyword word's or it starts with the keyword word; hyphenated words also count as
+their parts (number ranges stay whole). `requirements_covered` uses `words` by
+default and matches within one place (a list item, or a field / line / paragraph
+per `split`); `atom_keywords` uses `literal` unless configured with `match: words`.
 
 ## Keyword faithfulness (deterministic, `atom_keywords`)
 

@@ -25,7 +25,8 @@ uv tool install git+https://github.com/bwyndham/llm-evals@v0.1.0
 The command is `llm-evals`. (Inside this repo it also answers to `eval`, run
 through `uv run`; in a plain shell, `eval` is bash's own built-in.)
 
-It needs Python 3.11+ and, for real runs, `ANTHROPIC_API_KEY`. Claude models only.
+It needs Python 3.11+ and, for real runs, either `ANTHROPIC_API_KEY` or a signed-in
+`claude` CLI (see "Running on a Claude subscription" below). Claude models only.
 
 ## 2. Start from a working suite
 
@@ -104,6 +105,7 @@ failed sample. If you prefer, register a pydantic model with
 |---|---|---|
 | `field_matches` | an output field equals the case's expected value (or one of a list) | `field`, `expected_key`, `ignore_case` |
 | `keywords_present` | a field contains the case's expected keywords | `field`, `expected_key` (default `keywords`), `min_share` |
+| `requirements_covered` | every requirement in `expected.requirements` (or the case's rendered atoms) is stated in the named fields, matching words in any form and order within one list item or field | `fields`, `min_keyword_share`, `match` (`words` or `literal`), `split` (`none`, `lines`, `paragraphs`), `requirements_key` |
 | `regex` | a field matches a pattern, or doesn't | `field`, `pattern`, `must_match`, `flags` (`ims`) |
 | `max_length` | a field is at most N characters | `field`, `max_chars` |
 | `checklist` | an LLM judge answers "yes" to each rubric question | `rubric`, `template`, `system_template` |
@@ -191,6 +193,27 @@ Prove it catches what you care about, too. Write a deliberately worse prompt
 version, list it under `seeded_variants`, and check that `llm-evals seeded`
 rolls it back.
 
+### Running on a Claude subscription
+
+`--provider claude-code` sends every model call (the system under test and the
+judges) through the `claude` CLI in headless mode, signed in with your claude.ai
+account, so local runs count against your Pro or Max plan's usage limits instead
+of API billing:
+
+```bash
+claude auth login                              # once
+llm-evals gate evals/support-triage --candidate versions/v2.yaml --provider claude-code
+llm-evals rescore evals/support-triage --run <id> --with-judges checklist --provider claude-code
+```
+
+Each call replaces Claude Code's system prompt with yours and turns off tools,
+settings, MCP servers and skills, so the model sees what it would through the API.
+`ANTHROPIC_API_KEY` is removed from the CLI's environment so it can't bill the key
+instead. Reaching the plan's usage limit stops the run with a message rather than
+recording failures; costs in the report are list-price equivalents. It makes text
+calls only, so `agent_replay` suites still need `--provider anthropic`. CI keeps
+using an API key.
+
 ## 7. Gate pull requests
 
 ```yaml
@@ -242,7 +265,7 @@ The workflow then says `uses: ./.github/actions/llm-evals`, and everything else 
 
 ## Limits
 
-- **Claude only.** A provider interface exists (`llm_evals.runners.providers.base`),
+- **Claude only**, through the API (`anthropic`) or the `claude` CLI (`claude-code`). A provider interface exists (`llm_evals.runners.providers.base`),
   but only Anthropic and the offline mock implement it.
 - **You pay for runs.** About `cases × samples × 2` model calls per gated PR.
   Run `estimate` first, and keep a `cost-cap`.

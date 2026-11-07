@@ -17,6 +17,12 @@ Implements the rule in docs/contracts.md ("Keyword faithfulness"):
 
 The case must carry `source["atoms"]` with `keywords` (cases built by
 `ask_renderer` do); without them the check fails with a clear reason.
+
+`match` picks how a keyword is found (see `llm_evals.checks.keywords`):
+`literal` (the default, the contract rule above: case-insensitive substring)
+or `words` (every word of the keyword, in any form and order). `words` is
+kinder to real model output ("an API key" covers "api keys"); switching a
+suite to it changes its pass rates, so do it in its own PR.
 """
 
 from __future__ import annotations
@@ -29,6 +35,7 @@ from gherkin import Parser
 from gherkin.errors import ParserError
 
 from llm_evals.checks._base import BaseCheck
+from llm_evals.checks.keywords import MATCH_MODES, MatchMode, keyword_in
 from llm_evals.registry import register_check
 from llm_evals.types import Case, CheckContext, CheckKind, Score
 
@@ -94,8 +101,11 @@ class AtomKeywords(BaseCheck):
     name = "atom_keywords"
     kind: CheckKind = "deterministic"
 
-    def __init__(self, *, min_keyword_share: float, critical: bool) -> None:
+    def __init__(self, *, min_keyword_share: float, critical: bool, match: MatchMode = "literal") -> None:
         super().__init__(critical=critical)
+        if match not in MATCH_MODES:
+            raise TypeError(f"atom_keywords: match must be one of {', '.join(MATCH_MODES)}, got {match!r}")
+        self.match: MatchMode = match
         if isinstance(min_keyword_share, bool) or not isinstance(min_keyword_share, (int, float)) or not (
             0.0 < float(min_keyword_share) <= 1.0
         ):
@@ -126,7 +136,7 @@ class AtomKeywords(BaseCheck):
             atom_id = str(atom.get("id"))
             keywords = [str(k).lower() for k in atom["keywords"]]
             all_keywords += keywords
-            matched = [k for k in keywords if k in ticket_text]
+            matched = [k for k in keywords if keyword_in(k, ticket_text, self.match)]
             need = self.needed(len(keywords))
             covered = len(matched) >= need
             hinted = atom_id in hinted_ids
@@ -152,7 +162,7 @@ class AtomKeywords(BaseCheck):
         keyword_set = sorted(set(all_keywords))
         for name, text in scenarios:
             lowered = text.lower()
-            if not any(k in lowered for k in keyword_set):
+            if not any(keyword_in(k, lowered, self.match) for k in keyword_set):
                 sub_scores.append({"invented_scenario": name, "reason": "no atom keyword in name or steps"})
                 failures.append(f"invented scenario {name!r}: no atom keyword in its name or steps")
 
@@ -175,5 +185,6 @@ class AtomKeywords(BaseCheck):
 
 
 @register_check("atom_keywords")
-def atom_keywords(*, min_keyword_share: float = 0.6, critical: bool = False) -> AtomKeywords:
-    return AtomKeywords(min_keyword_share=min_keyword_share, critical=critical)
+def atom_keywords(*, min_keyword_share: float = 0.6, critical: bool = False,
+                  match: MatchMode = "literal") -> AtomKeywords:
+    return AtomKeywords(min_keyword_share=min_keyword_share, critical=critical, match=match)
