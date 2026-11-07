@@ -42,7 +42,7 @@ def test_init_refuses_a_folder_with_files_and_writes_ci_at_the_repo_root(tmp_pat
     assert res.exit_code == 0, res.output
     workflow = (tmp_path / ".github" / "workflows" / "llm-evals.yml").read_text()
     assert "suite: evals/triage" in workflow and '"evals/triage/**"' in workflow
-    assert "uses: bwyndham/llm-evals@v0.1.0" in workflow
+    assert "uses: bwyndham/llm-evals@v0.2.0" in workflow
 
 
 def test_gate_against_a_base_checkout_with_the_same_plugins(tmp_path):

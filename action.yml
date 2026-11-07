@@ -2,7 +2,7 @@
 # against the base branch's, and keep one PR comment for the suite up to date.
 #
 #   - uses: actions/checkout@v4
-#   - uses: bwyndham/llm-evals@v0.1.0
+#   - uses: bwyndham/llm-evals@v0.2.0
 #     with:
 #       suite: evals/support-triage
 #       anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
