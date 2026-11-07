@@ -416,7 +416,7 @@ def init(
     path: Path = typer.Argument(..., help="Folder to create the suite in"),
     ci: bool = typer.Option(False, "--ci", help="Also write .github/workflows/llm-evals.yml at the repo root"),
     force: bool = typer.Option(False, help="Write into a folder that isn't empty, replacing starter files"),
-    action: str = typer.Option("bwyndham/llm-evals@v0.1.0",
+    action: str = typer.Option("bwyndham/llm-evals@v0.2.0",
                                help="The Action the --ci workflow uses: a GitHub reference, or a local "
                                     "copy such as ./.github/actions/llm-evals"),
 ) -> None:

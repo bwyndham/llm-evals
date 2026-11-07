@@ -13,7 +13,7 @@ The gate decides from the 95% confidence interval of the change in case pass rat
 
 ## Status
 
-Version 0.1, [MIT licensed](LICENSE). Maintained as a portfolio project: issues and
+Version 0.2, [MIT licensed](LICENSE). Maintained as a portfolio project: issues and
 questions are welcome, with no promise of support. What it doesn't do yet: models other than Claude; multi-turn conversations (it runs
 one-shot prompts and tool-using agents); and the faithfulness judge in the example
 suite hasn't passed its own calibration bar, so it reports but doesn't gate.
@@ -23,7 +23,7 @@ suite hasn't passed its own calibration bar, so it reports but doesn't gate.
 Install the `llm-evals` command:
 
 ```bash
-uv tool install git+https://github.com/bwyndham/llm-evals@v0.1.0
+uv tool install git+https://github.com/bwyndham/llm-evals@v0.2.0
 # or from a local clone: uv tool install ./llm-evals
 ```
 

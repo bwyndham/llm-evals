@@ -11,14 +11,14 @@ the right category, cite a source, stay under a length, never promise a refund.
 It doesn't replace judgment calls with no checkable answer, though an LLM
 judge you've calibrated against your own labels can cover some of them.
 
-> **Status.** Version 0.1, MIT licensed. Pin to the `v0.1.0` tag, as below:
+> **Status.** Version 0.2, MIT licensed. Pin to the `v0.2.0` tag, as below:
 > `main` may change.
 
 ## 1. Install
 
 ```bash
-uv tool install git+https://github.com/bwyndham/llm-evals@v0.1.0
-# or: pipx install git+https://github.com/bwyndham/llm-evals@v0.1.0
+uv tool install git+https://github.com/bwyndham/llm-evals@v0.2.0
+# or: pipx install git+https://github.com/bwyndham/llm-evals@v0.2.0
 # or, from a local clone: uv tool install ./llm-evals
 ```
 
@@ -229,7 +229,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: bwyndham/llm-evals@v0.1.0
+      - uses: bwyndham/llm-evals@v0.2.0
         with:
           suite: evals/support-triage
           anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
