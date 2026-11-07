@@ -65,6 +65,9 @@ uv run eval promote suites/spec-writing versions/baseline.yaml
 
 Model calls go through the Anthropic SDK. Put your key in a gitignored `.env`
 at the repo root (copy `.env.example`); a key exported in your shell wins.
+To run on a Claude Pro or Max subscription instead, pass `--provider claude-code`:
+calls go through a signed-in `claude` CLI and count against the plan's usage
+limits, not API billing ([details](docs/adopting.md#running-on-a-claude-subscription)).
 
 ### Offline demo mode (no API key)
 

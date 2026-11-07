@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 import typer
 
@@ -41,16 +41,18 @@ def _store(suite: SuiteConfig, db: Optional[Path]) -> Store:
     return Store(path)
 
 
-PROVIDER_HELP = "anthropic (real model calls) or mock (offline demo mode: rule-based, no API key)"
+PROVIDER_HELP = ("anthropic (real model calls, API key), claude-code (real model calls through the claude CLI, on your Claude subscription) or mock (offline demo mode: rule-based, no API key)")
+PROVIDERS = ("anthropic", "claude-code", "mock")
 
 
 class _Env:
     """The runner, judge, checks and pairwise check for one suite and provider."""
 
     def __init__(self, suite: SuiteConfig, provider: str, skip_judges: bool = False) -> None:
-        if provider not in ("anthropic", "mock"):
-            raise typer.BadParameter(f"--provider must be anthropic or mock, not {provider!r}")
+        if provider not in PROVIDERS:
+            raise typer.BadParameter(f"--provider must be one of {', '.join(PROVIDERS)}, not {provider!r}")
         self.offline = provider == "mock"
+        self.provider = provider
         if skip_judges:
             # Judge checks are report-only until calibrated; skipping them cuts most of the spend.
             suite = suite.model_copy(update={
@@ -72,6 +74,13 @@ class _Env:
                 tool_provider = MockResearchModel(
                     memory_path=suite.dir / "data" / "world_facts.jsonl"
                 )
+        elif provider == "claude-code":
+            if suite.runner.type == "agent_replay":
+                raise typer.BadParameter("--provider claude-code makes text calls only; the agent_replay "
+                                         "runner needs tool use (use --provider anthropic)")
+            from llm_evals.runners.providers.claude_code import ClaudeCodeProvider
+
+            text_provider = ClaudeCodeProvider()
         else:
             from llm_evals.runners.providers.anthropic import AnthropicProvider
 
@@ -94,6 +103,9 @@ class _Env:
         self.pairwise = engine.build_pairwise(suite, self.judge)
 
     def annotate(self, report) -> None:
+        if self.provider == "claude-code":
+            report.warnings.insert(0, "Model calls ran through the claude CLI on a Claude subscription: costs "
+                                      "are list-price equivalents, not charges.")
         if self.offline:
             report.warnings.insert(0, "Offline demo mode: outputs come from a rule-based mock, so "
                                       "this shows the pipeline working, not model quality. Costs "
@@ -318,6 +330,7 @@ def rescore(
         None, help="Comma-separated judge checks to run on the stored outputs (e.g. faithfulness). "
                    "Makes judge calls only; the system under test is never called."),
     concurrency: int = typer.Option(8),
+    provider: str = typer.Option("anthropic", help="Judge provider for --with-judges: anthropic or claude-code."),
 ) -> None:
     """Re-score a stored run with the current checks and gate rules.
 
@@ -352,10 +365,19 @@ def rescore(
         if unknown:
             raise typer.BadParameter(f"not checks in this suite: {', '.join(sorted(unknown))}")
         from llm_evals.judges.client import JudgeClient
-        from llm_evals.runners.providers.anthropic import AnthropicProvider
 
+        if provider == "claude-code":
+            from llm_evals.runners.providers.claude_code import ClaudeCodeProvider
+
+            judge_provider: Any = ClaudeCodeProvider()
+        elif provider == "anthropic":
+            from llm_evals.runners.providers.anthropic import AnthropicProvider
+
+            judge_provider = AnthropicProvider()
+        else:
+            raise typer.BadParameter(f"--provider for rescore must be anthropic or claude-code, not {provider!r}")
         cache = suite.dir / ".evals" / "judge_cache.sqlite"
-        judge = JudgeClient(AnthropicProvider(), model=suite.judge.get("model", "claude-sonnet-5-5"),
+        judge = JudgeClient(judge_provider, model=suite.judge.get("model", "claude-sonnet-5-5"),
                             params=suite.judge.get("params"), cache_path=cache)
         judged = suite.model_copy(update={
             "checks": [c for c in suite.checks if c.name in wanted], "pairwise": None})
