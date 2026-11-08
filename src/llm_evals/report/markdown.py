@@ -150,7 +150,7 @@ def render_unchanged(suite: str, version: Any) -> str:
         f"This PR doesn't change the version under test (`{version.name}`, {version.id}): same "
         "model, params and prompt templates as the base branch. The paid run was skipped.",
         "",
-        "To check a change to cases or checks, re-score a stored run locally with `eval rescore`.",
+        "To check a change to cases or checks, re-score a stored run locally with `llm-evals rescore`.",
         "",
     ])
 
