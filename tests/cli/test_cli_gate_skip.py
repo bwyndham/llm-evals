@@ -20,6 +20,8 @@ def test_same_version_is_skipped_with_a_comment(tmp_path):
     assert res.exit_code == 0, res.output
     comment = (out / "comment.md").read_text()
     assert comment.startswith("<!-- llm-evals:report:spec-writing -->") and "no version change" in comment
+    # Read in other repos' PRs: name the shell command, not this repo's `uv run eval` alias.
+    assert "`llm-evals rescore`" in comment and "`eval rescore`" not in comment
     assert not (out / "report.json").exists()  # nothing ran
 
 
